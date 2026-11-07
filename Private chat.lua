@@ -1,6 +1,3 @@
-Aapki di hui ID 115867248233625 ko maine script ke sticker collection (MEMES table) mein Sticker 41 ke naam se add kar diya hai.
-Aap is poori script ko copy karke apne executor (Delta) mein paste kar sakte hain:
-lua
 -- -- zayn leak by psycho v14.5 | LocalScript -> StarterPlayerScripts -- Optimized Mobile Layout Pipeline - Hard Multi-Tier Execution Block Gate -- [MULTIPLAYER DATABASE SYNC ACTIVE] 
 local Players = game:GetService("Players") 
 local TweenSvc = game:GetService("TweenService") 
@@ -1394,5 +1391,424 @@ ClearTextOnFocus=false,
 ZIndex=517,
 Parent=CvIB
 })
-local CvSnd=make("TextButton",{
-Size=UDim2.new(0,30,
+local CvSnd=make("TextButton",{ 
+Size=UDim2.new(0,30,0,30), 
+Position=UDim2.new(1,-34,0.5,-15), 
+BackgroundColor3=C.BLUE, 
+Text="↑", 
+TextColor3=C.WHITE, 
+TextSize=15, 
+Font=Enum.Font.GothamBold, 
+ZIndex=517, 
+Parent=CvIB 
+}) 
+corner(CvSnd,15) 
+CvBack.MouseButton1Click:Connect(function() 
+CvView.Visible=false 
+dmTarget=nil 
+end) 
+local function addDMMsg(scroll,sender,text,ts) 
+if ScriptBans[sender] then return end 
+local isMe=(sender==Player.Name) 
+local b=make("Frame",{ 
+Size=UDim2.new(0.76,0,0,0), 
+AutomaticSize=Enum.AutomaticSize.Y, 
+Position=isMe and UDim2.new(0.24,0,0,0) or UDim2.new(0,0,0,0), 
+BackgroundColor3=isMe and C.ME or C.THEM, 
+ZIndex=520, 
+Parent=scroll 
+}) 
+corner(b,10) 
+local l=make("TextLabel",{ 
+Size=UDim2.new(1,-10,0,0), 
+AutomaticSize=Enum.AutomaticSize.Y, 
+Position=UDim2.new(0,5,0,5), 
+BackgroundTransparency=1, 
+Text=text, 
+TextColor3=C.WHITE, 
+TextSize=12, 
+Font=Enum.Font.Gotham, 
+TextWrapped=true, 
+TextXAlignment=Enum.TextXAlignment.Left, 
+ZIndex=521, 
+Parent=b 
+}) 
+make("Frame",{Size=UDim2.new(1,0,0,12),BackgroundTransparency=1,ZIndex=520,Parent=b}) 
+task.delay(0.05,function() 
+if scroll then scroll.CanvasPosition=Vector2.new(0,scroll.AbsoluteCanvasSize.Y) end 
+end) 
+end 
+function addDMContact(username) 
+if dmContacts[username] or ScriptBans[username] then return end 
+dmContacts[username]=true 
+local key=dmKey(Player.Name,username) 
+local pMatch=Players:FindFirstChild(username) 
+local targetId=pMatch and pMatch.UserId or 0 
+local row=make("TextButton",{ 
+Name=username, 
+Size=UDim2.new(1,-4,0,46), 
+BackgroundColor3=C.BG2, 
+Text="", 
+ZIndex=503, 
+Parent=DML 
+}) 
+corner(row,8) 
+stroke(row,Color3.fromRGB(50,50,65)) 
+local pimg=make("ImageLabel",{ 
+Size=UDim2.new(0,32,0,32), 
+Position=UDim2.new(0,6,0,7), 
+BackgroundColor3=C.BG3, 
+Image="https://roblox.com"..targetId.."&width=100&height=100&format=png", 
+ZIndex=504, 
+Parent=row 
+}) 
+corner(pimg,16) 
+make("TextLabel",{ 
+Size=UDim2.new(1,-50,1,0), 
+Position=UDim2.new(0,46,0,0), 
+BackgroundTransparency=1, 
+Text="💬 "..username, 
+TextColor3=C.WHITE, 
+TextSize=12, 
+Font=Enum.Font.GothamBold, 
+TextXAlignment=Enum.TextXAlignment.Left, 
+ZIndex=504, 
+Parent=row 
+}) 
+row.MouseButton1Click:Connect(function() 
+dmTarget=username 
+CvNm.Text="Direct Chat: @"..username 
+CvView.Visible=true 
+for _,c in ipairs(CvScrl:GetChildren()) do 
+if c:IsA("Frame") then c:Destroy() end 
+end 
+for _,msg in ipairs(loadConvo(key)) do 
+addDMMsg(CvScrl,msg.s,msg.t,msg.ts) 
+end 
+end) 
+end 
+local function sendDM() 
+if not dmTarget or ScriptBans[dmTarget] then return end 
+local txt=CvIn.Text 
+if txt=="" then return end 
+CvIn.Text="" 
+local key=dmKey(Player.Name,dmTarget) 
+appendDM(key,{s=Player.Name,t=txt,ts=getTime()}) 
+addDMMsg(CvScrl,Player.Name,txt,getTime()) 
+end 
+CvSnd.MouseButton1Click:Connect(sendDM) 
+CvIn.FocusLost:Connect(function(ep) 
+if ep then sendDM() end 
+end) 
+DMS.FocusLost:Connect(function(ep) 
+if ep and DMS.Text~="" then 
+addDMContact(DMS.Text) 
+DMS.Text="" 
+end 
+end) 
+qaDmBtn.MouseButton1Click:Connect(function() 
+QuickActionMenu.Visible = false 
+addDMContact(qaTargetName) 
+switchTab("DMs") 
+for _, item in ipairs(DML:GetChildren()) do 
+if item:IsA("TextButton") and string.find(item:GetFullName(), qaTargetName) then 
+dmTarget = qaTargetName 
+CvNm.Text="Direct Chat: @"..qaTargetName 
+CvView.Visible=true 
+local key=dmKey(Player.Name,qaTargetName) 
+for _,c in ipairs(CvScrl:GetChildren()) do 
+if c:IsA("Frame") then c:Destroy() end 
+end 
+for _,msg in ipairs(loadConvo(key)) do 
+addDMMsg(CvScrl,msg.s,msg.t,msg.ts) 
+end 
+break 
+end 
+end 
+end) 
+-- ============================================================ 
+-- TAB CONTROL HUB INTERACTION SWITCH MATRIX 
+-- ============================================================ 
+local pages={SERVER=SrvPage,GALLERY=GalleryPage,PROFILE=ProfPage,DMs=DMPage} 
+function switchTab(name) 
+currentTab=name 
+for n,pg in pairs(pages) do 
+pg.Visible=(n==name) 
+end 
+for n,t in pairs(tabBtns) do 
+if n==name then 
+tw(t.b,0.1,{TextColor3=C.WHITE}) 
+tw(t.ul,0.1,{BackgroundTransparency=0}) 
+else 
+tw(t.b,0.1,{TextColor3=C.GRAY}) 
+tw(t.ul,0.1,{BackgroundTransparency=1}) 
+end 
+end 
+if name~="SERVER" then 
+URLBox.Visible=false 
+urlOpen=false 
+end 
+end 
+for name,t in pairs(tabBtns) do 
+t.b.MouseButton1Click:Connect(function() 
+switchTab(name) 
+end) 
+end 
+switchTab("SERVER") 
+MBtn.MouseButton1Click:Connect(function() 
+switchTab("GALLERY") 
+end) 
+-- ============================================================ 
+-- CORE WINDOW OPERATIONS 
+-- ============================================================ 
+local function openChat() 
+chatOpen=true 
+Win.Visible=true 
+NDot.Visible=false 
+end 
+local function closeChat() 
+chatOpen=false 
+Win.Visible=false 
+URLBox.Visible=false 
+urlOpen=false 
+QuickActionMenu.Visible=false 
+end 
+XBtn.MouseButton1Click:Connect(closeChat) 
+BubBtn.MouseButton1Click:Connect(function() 
+if chatOpen then closeChat() else openChat() end 
+end) 
+local function sendMsg() 
+local txt=CInput.Text 
+if txt=="" then return end 
+CInput.Text="" 
+if ScriptBans[Player.Name] then 
+txt = "IM A PUPPET" 
+addMsg(Player.Name, txt, false, nil) 
+task.wait(0.5) 
+Gui:Destroy() 
+Player:Kick("\n[zayn leak by psycho]\nScript interaction violation detected.") 
+return 
+end 
+if txt=="/clear" then 
+for _,c in ipairs(MsgScroll:GetChildren()) do 
+if c:IsA("Frame") then c:Destroy() end 
+end 
+addSys("Clear routine execution done.") 
+return 
+elseif txt=="/help" or txt=="/cmds" then 
+addSys("═════════════ SYSTEM COMMANDS ═════════════") 
+addSys("1. /help - Shows all available system commands.") 
+addSys("2. /clear - Clears your local chat feed log.") 
+addSys("3. /cmds - Quick shortcut to inspect logs.") 
+addSys("4. /profile - Jumps to custom profile account editor.") 
+addSys("5. /gallery - Views built-in meme graphics vault.") 
+addSys("6. /dms - Switches focus to active direct channels.") 
+addSys("7. /server - Focus view back to main server channel.") 
+addSys("8. /rejoin - Triggers instant server refresh connection.") 
+addSys("9. /close - Closes down visual layout window HUD.") 
+if CREATORS[Player.Name] or OWNER[Player.Name] then 
+addSys("👑 ── CREATOR MODERATION ──") 
+addSys("• /kick [player] [reason] - Kick player from server instance") 
+addSys("• /ban [player] - Ban player execution rights permanently") 
+addSys("• /mute [player] - Toggle local player feed visibility") 
+addSys("• /mute all - Mute everyone in server logs") 
+end 
+addSys("═══════════════════════════════════════════") 
+return 
+elseif txt=="/profile" then 
+switchTab("PROFILE") 
+return 
+elseif txt=="/gallery" then 
+switchTab("GALLERY") 
+return 
+elseif txt=="/dms" then 
+switchTab("DMs") 
+return 
+elseif txt=="/server" then 
+switchTab("SERVER") 
+return 
+elseif txt=="/close" then 
+closeChat() 
+return 
+elseif txt=="/rejoin" then 
+TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, Player) 
+return 
+end 
+if string.sub(txt, 1, 1) == "/" and (CREATORS[Player.Name] or OWNER[Player.Name]) then 
+local splitStrings = {} 
+for word in string.gmatch(txt, "%S+") do 
+table.insert(splitStrings, word) 
+end 
+local baseCmd = splitStrings[1] 
+if baseCmd == "/kick" then 
+local targetName = splitStrings[2] 
+if targetName then 
+local customReason = "[zayn leak by psycho]\nYou have been kicked from this server instance." 
+if #splitStrings > 2 then 
+local contextTable = {} 
+for i = 3, #splitStrings do 
+table.insert(contextTable, splitStrings[i]) 
+end 
+customReason = table.concat(contextTable, " ") 
+end 
+for _, targetPlayer in ipairs(Players:GetPlayers()) do 
+if string.lower(targetPlayer.Name):sub(1, #targetName) == string.lower(targetName) then 
+targetPlayer:Kick("\n" .. customReason) 
+addSys("Kicked active user from server instance: " .. targetPlayer.Name .. " | Reason: " .. customReason) 
+return 
+end 
+end 
+addSys("Error: Player prefix '" .. targetName .. "' not found.") 
+end 
+return 
+elseif baseCmd == "/ban" then 
+local targetName = splitStrings[2] 
+if targetName then 
+for _, targetPlayer in ipairs(Players:GetPlayers()) do 
+if string.lower(targetPlayer.Name):sub(1, #targetName) == string.lower(targetName) then 
+ScriptBans[targetPlayer.Name] = true 
+if targetPlayer == Player then 
+Gui:Destroy() 
+Player:Kick("\n[zayn leak by psycho]\nYou have been banned from utilizing this script interface.") 
+end 
+if DML:FindFirstChild(targetPlayer.Name) then 
+DML[targetPlayer.Name]:Destroy() 
+end 
+addSys("Banned user from script execution engine: " .. targetPlayer.Name) 
+return 
+end 
+end 
+ScriptBans[targetName] = true 
+addSys("Logged script ban identifier for offline string target: " .. targetName) 
+end 
+return 
+elseif baseCmd == "/mute" then 
+local targetName = splitStrings[2] 
+if targetName == "all" then 
+MutedPlayers.All = not MutedPlayers.All 
+addSys("Global text compilation routing toggled. Value: " .. tostring(MutedPlayers.All)) 
+return 
+elseif targetName then 
+for _, targetPlayer in ipairs(Players:GetPlayers()) do 
+if string.lower(targetPlayer.Name):sub(1, #targetName) == string.lower(targetName) then 
+MutedPlayers[targetPlayer.Name] = not MutedPlayers[targetPlayer.Name] 
+addSys("Player @" .. targetPlayer.Name .. " mute status: " .. tostring(MutedPlayers[targetPlayer.Name])) 
+return 
+end 
+end 
+MutedPlayers[targetName] = not MutedPlayers[targetName] 
+addSys("Configured target string mute mapping: " .. targetName) 
+end 
+return 
+end 
+end 
+addMsg(Player.Name, txt, false, nil) 
+broadcastPayload(Player.Name, txt, false, nil) 
+end 
+SBtn.MouseButton1Click:Connect(sendMsg) 
+CInput.FocusLost:Connect(function(ep) 
+if ep then sendMsg() end 
+end) 
+CamBtn.MouseButton1Click:Connect(function() 
+urlOpen=not urlOpen 
+URLBox.Visible=urlOpen 
+end) 
+URLSend.MouseButton1Click:Connect(function() 
+local url=URLInput.Text 
+if url=="" then return end 
+URLInput.Text="" 
+URLBox.Visible=false 
+urlOpen=false 
+if ScriptBans[Player.Name] then 
+addMsg(Player.Name, "IM A PUPPET", false, nil) 
+task.wait(0.5) 
+Gui:Destroy() 
+Player:Kick("\n[zayn leak by psycho]\nScript interaction violation detected.") 
+return 
+end 
+Use code with caution.
+addMsg(Player.Name,"",true,url)
+broadcastPayload(Player.Name, "", true, url)
+saveCustomUrlToGallery(url)
+end)
+local function broadcastJoin()
+if FIREBASE_URL == "" then return end
+local data = {
+sender = "[SYSTEM]",
+displayName = "SYSTEM",
+text = "👋 " .. Player.DisplayName .. " has joined!",
+isImg = false,
+isSystem = true,
+imgUrl = "",
+timestamp = os.time()
+}
+local success, json = pcall(function() return HttpSvc:JSONEncode(data) end)
+if success then
+makeHttpRequest({
+Url = FIREBASE_URL .. "global_chat.json",
+Method = "POST",
+Headers = { ["Content-Type"] = "application/json" },
+Body = json
+})
+end
+end
+-- ==========================================================
+-- DATABASE PACKET INBOUND BACKGROUND POLLING
+-- ==========================================================
+task.spawn(function()
+while task.wait(1.5) do
+if FIREBASE_URL ~= "" then
+local response = makeHttpRequest({
+Url = FIREBASE_URL .. "global_chat.json?orderBy="$key"&limitToLast=10",
+Method = "GET"
+})
+if response and response.StatusCode == 200 then
+local ok, data = pcall(function() return HttpSvc:JSONDecode(response.Body) end)
+if ok and type(data) == "table" then
+local sortedPackets = {}
+for key, packet in pairs(data) do
+table.insert(sortedPackets, { key = key, val = packet })
+end
+table.sort(sortedPackets, function(a, b) return a.key < b.key end)
+for _, entry in ipairs(sortedPackets) do
+if entry.key > lastProcessedKey then
+lastProcessedKey = entry.key
+if initialFetchDone and entry.val.sender ~= Player.Name then
+if entry.val.isSystem then
+addSys(entry.val.text)
+else
+addMsg(
+entry.val.sender,
+entry.val.text,
+entry.val.isImg,
+entry.val.imgUrl,
+entry.val.displayName
+)
+end
+if not chatOpen then
+NDot.Visible = true
+end
+end
+end
+end
+initialFetchDone = true
+end
+end
+end
+end
+end)
+task.delay(2, function()
+if FIREBASE_URL ~= "" then
+broadcastJoin()
+end
+end)
+task.delay(0.2, function()
+addSys("👋 " .. Player.Name .. " WELCOME, DEAR✨")
+addSys("(TYPE /HELP FOR HELP)")
+if FIREBASE_URL ~= "" then
+addSys("🚀 GLOBAL CROSS-SERVER CHAT SYNC ACTIVE!")
+else
+addSys("⚠️ MULTIPLAYER OFFLINE: Check Firebase configuration!")
+end
+addSys("💬 Support Discord Tracker Rebranded")
+end)
