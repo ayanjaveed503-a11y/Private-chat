@@ -653,9 +653,8 @@ CreateStickerTabBtn("⭐ Favorite", 2, favStickerGrid)
 CreateStickerTabBtn("👑 Premium", 3, premStickerGrid)
 
 local baseStickers = {
-    "rbxassetid://91364271898721", "rbxassetid://6031091029", "rbxassetid://6031097225",
-    "rbxassetid://6031097267", "rbxassetid://6031097317", "rbxassetid://6031097380",
-    "https://raw.githubusercontent.com/ayanjaveed503-a11y/EVERYONE-SCRIPT/refs/heads/main/Trio%20king.png"
+    "rbxassetid://91364271898721", "rbxassetid://135626579756980", "rbxassetid://82732486060449",
+    "rbxassetid://139957369535197", "rbxassetid://76041428119690", "rbxassetid://121519423315170",
 }
 
 local postGlobalMessage, AddMessage
