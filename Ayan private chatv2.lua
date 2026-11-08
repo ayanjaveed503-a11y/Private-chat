@@ -11,8 +11,9 @@ local Player = Players.LocalPlayer
 -- ============================================================ 
 -- DATABASE CONFIGURATION 
 -- ============================================================ 
-local FIREBASE_URL = "https://firebaseio.com" 
-local GLOBAL_API_URL = "https://mockapi.io" 
+local FIREBASE_URL = "https://psychoontop-chat-mkx-default-rtdb.firebaseio.com/
+" 
+local GLOBAL_API_URL = "https://6aef2e43b9925b27ce16b743.mockapi.io/v1/Message" 
 local lastProcessedKey = "" 
 local initialFetchDone = false 
 
